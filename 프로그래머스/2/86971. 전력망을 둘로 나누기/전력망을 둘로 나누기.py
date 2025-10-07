@@ -1,57 +1,19 @@
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-uf = []
-
-def find(a):
-    global uf
-    if uf[a] < 0: return a
-    uf[a] = find(uf[a])
-    return uf[a]
-
-def merge(a, b):
-    global uf
-    pa = find(a)
-    pb = find(b)
-    if pa == pb: return
-    uf[pa] += uf[pb]
-    uf[pb] = pa
+def dfs(v, graph, visited):
+    visited[v] = True
+    return sum([1] + [dfs(u, graph, visited) for u in graph[v] if not visited[u]])
 
 def solution(n, wires):
-    global uf
-    answer = int(1e9)
-    k = len(wires)
-    for i in range(k):
-        uf = [-1 for _ in range(n+1)]
-        tmp = [wires[x] for x in range(k) if x != i]
-        for a, b in tmp: merge(a, b)
-        v = [x for x in uf[1:] if x < 0]
-        answer = min(answer, abs(v[0]-v[1]))
+    graph = [[] for _ in range(n+1)]
+    for v, u in wires:
+        graph[v].append(u)
+        graph[u].append(v)
+
+    answer = 100
+    for i in range(n-1):
+        visited = [False for _ in range(n+1)]
+        v1, v2 = wires[i]
+        visited[v2] = True
+        tmp = abs(dfs(v1, graph, visited) - dfs(v2, graph, visited))
+        answer = min(tmp, answer)
 
     return answer
