@@ -2,22 +2,24 @@ from collections import defaultdict
 import heapq
 
 def solution(n, costs):
+    answer = 0
     edges = defaultdict(list)
     for edge in costs:
-        edges[edge[0]].append([edge[2], edge[1]])
-        edges[edge[1]].append([edge[2], edge[0]])
+        edges[edge[0]].append([edge[1], edge[2]])
+        edges[edge[1]].append([edge[0], edge[2]])
     
-    hq = []
-    heapq.heappush(hq, [0, 0])
     visited = [False for _ in range(n)]
+    hq = [[0, 0]]
     count = 0
-    answer = 0
-    while hq :
+    while hq:
+        if count == n:
+            break
         cur_cost, cur_node = heapq.heappop(hq)
         if not visited[cur_node]:
-            count += 1
             visited[cur_node] = True
             answer += cur_cost
-            for cost, next_node in edges[cur_node]:
-                heapq.heappush(hq, [cost, next_node])
+            count += 1
+        for next_node, next_cost in edges[cur_node]:
+            if not visited[next_node]:
+                heapq.heappush(hq, [next_cost, next_node])
     return answer
