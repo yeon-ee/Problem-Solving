@@ -12,9 +12,8 @@ def solution(n, costs):
     visited = [False for _ in range(n)]
     count = 0
     answer = 0
-    while hq and count < n:
+    while hq :
         cur_cost, cur_node = heapq.heappop(hq)
-        # print(cur_cost, cur_node)
         if not visited[cur_node]:
             count += 1
             visited[cur_node] = True
